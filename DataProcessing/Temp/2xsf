@@ -1,0 +1,5 @@
+#!/bin/bash
+
+for (( i=1; i<=100; i++ )) do
+	check2xsf -R -B=$i IceIh.check IceIh.$i.xsf
+done
