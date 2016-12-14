@@ -5,17 +5,21 @@ from os.path import join, isfile
 from readers import MappingReader, PermReader, EnergyReader, DispReader
 import h5py
 
-'''
-TODO: 
-- update 
-- save
-- finish plotting function to plot permittivities
-'''
-
 class Mapping(object):
+	'''
+	Class for mapping relative permittivites and Z-effs along some directions 
+
+	Required structure of the directory: 
+	-	files that end with the same string, which contain the quantities to be averaged over
+		There must be a number in the middle to index the files. 
+		e.g. IceIh.20.den_fmt for electron density
+	-	mapping.out 
+	Note that the required structure is automatically put into place by shell script mapping
+
+	'''
 
 	def __init__(self):
-		self.endstring = 'castep' # need to be rewritten
+		self.endstring = 'castep' 
 		self.permReader = PermReader()
 
 	def addDirectory(self, directory):
@@ -225,6 +229,9 @@ class Mapping(object):
 		hdf.close()
 
 class MappingTool(object):
+	'''
+	A class that uses the mapping class to map all related directories 
+	'''
 
 	def __init__(self, dirs):
 		self.dirs = dirs
@@ -261,6 +268,9 @@ class MappingTool(object):
 		hdf.close() 
 
 class Energy(object):
+	'''
+	A class that calculates the correction to BO surface due to 
+	'''
 
 	def __init__(self, wd):
 		self.workingDirectory = wd
@@ -279,7 +289,8 @@ class Energy(object):
 		self.readEnergy()
 		self.readDisp()
 
-		self.effectivePolarisation = np.zeros((self.nModes, self.samplesPerMode, 3)) # for 3 components of the electric field
+		self.effectivePolarisation = np.zeros((self.nModes, self.samplesPerMode, 3)) 
+									# for 3 components of the electric field
 		for mode in self.modes:
 			index = int(mode) - 4 # counting in keys() starts from 4
 			phononPrefractor = np.sqrt(2 * self.frequency[index]) # 1/std
@@ -287,8 +298,12 @@ class Energy(object):
 			a *= (phononPrefractor ** 2) # shape = (nAtoms, 3, 3)
 			b *= phononPrefractor # shape = (nAtoms, 3, 3)
 			coord = self.phononCoord[index] # shape = (samplesPerMode)
-			polarisation = np.einsum('ijk, m -> ijkm', a/3, coord ** 3) + np.einsum('ijk, m -> ijkm', b/2, coord ** 2) + np.einsum('ijk, m -> ijkm', c, coord) # shape = (nAtoms, 3, 3, samplesPerMode)
-			self.effectivePolarisation[index] = np.einsum('nj, nijk -> ki', self.disp[index], polarisation) # shape = (samplesPerMode, 3)
+			polarisation = np.einsum('ijk, m -> ijkm', a/3, coord ** 3) + np.einsum('ijk, m -> ijkm', 
+							b/2, coord ** 2) + np.einsum('ijk, m -> ijkm', c, coord) 
+							# shape = (nAtoms, 3, 3, samplesPerMode)
+			self.effectivePolarisation[index] = np.einsum('nj, nijk -> ki', 
+												self.disp[index], polarisation) 
+												# shape = (samplesPerMode, 3)
 
 		hdf.close()
 

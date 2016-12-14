@@ -20,13 +20,18 @@ class MCSampling(object): # abstract class
 	General purpose MC-sampling parent class for averaging over all the files in a directory with weights
 
 	Required structure of the directory: 
-	  -	files that end with the same string, which contain the quantities to be averaged over
+	-	files that end with the same string, which contain the quantities to be averaged over
 		There must be a number in the middle to index the files. 
 		e.g. IceIh.20.den_fmt for electron density
-	  - weights.dat that contain the weights of all the data points. 
+	-	weights.dat that contain the weights of all the data points. 
 		There is one-to-one correspondence between lines in weights.dat. For example, the ith row of weights.dat 
 		corresponds to IceIh.i.den_fmt
 	Note that the required structure is automatically put into place by shell scripts "caesar" and "mapping"
+
+	General procedure of averaging over all the files in a directory: 
+	-	addDirectory(directory)
+	- 	initialise()
+	- 	average()
 
 	'''
 
@@ -78,6 +83,11 @@ class MCSampling(object): # abstract class
 
 class PermSampling(MCSampling):
 	'''
+	An implementation of MCSampling for averaging over relative permittivities 
+
+	Additional functions:
+	- 	readPerm: reads a specific castep file specified by the index
+	- 	anhFreq: updates the frequencies to anharmonic frequencies for phonon permittivity calculation
 	'''
 
 	def __init__(self):
@@ -85,6 +95,12 @@ class PermSampling(MCSampling):
 		self.permReader = PermReader()
 
 	def initialise(self, dispFile):
+		'''
+		get basic parameters from the first castep file
+
+		dispFile: .disp file for the harmonic phonon modes
+		
+		'''
 		self.permReader.peep(self.files[0])
 		self.nAtoms = self.permReader.nAtoms
 		self.cellVolume = self.permReader.cellVolume
@@ -97,6 +113,19 @@ class PermSampling(MCSampling):
 		self.frequencyFractor = 1/(dispReader.frequency[startMode:] ** 2) 
 
 	def average(self, update, save, anharmonicity, anhFreqFile = '', numberOfFiles = 0):
+		'''
+		NOTE: by choosing to include anharmonicity, anharmonic frequencies are used instead of 
+		harmonic ones in phonon permittivity calculation but the normal modes are still harmonic 
+		normal modes as the difference is small (see phonon.py). In addition, anharmonic weights
+		are used to re-weigh the samples. 
+
+		Options:
+		- update: whether to read from the saved files or re-do the calculation
+		- save: whether to save the calculation 
+		- anharmonicity: whether to include anharmonicity or not
+		- anhFreqFile: path to anharmonic_eigenvalues.dat
+		- numberOfFiles: number of files in the directory to average over 
+		'''
 		self.getWeights(anharmonicity)
 
 		if numberOfFiles == 0:
@@ -122,6 +151,9 @@ class PermSampling(MCSampling):
 				self.saveAveragePerms2hdf5(label)
 
 	def readPerm(self, fileNumber):
+		'''
+		read a specific castep file specified by the index
+		'''
 		assert fileNumber < self.nFiles
 		f = self.files[fileNumber]
 		self.permReader.read(f)
@@ -134,6 +166,9 @@ class PermSampling(MCSampling):
 		return electronPerm, phononPerm
 
 	def anhFreq(self, anhFreqFile):
+		'''
+		update the frequencies to anharmonic frequencies for phonon permittivity calculation
+		'''
 		eigenvalueReader = AnhEigenvaluesReader(self.nAtoms * 3 - 3) # minus the three translational modes
 		eigenvalueReader.read(anhFreqFile)
 		self.frequencyFractor = 1/(eigenvalueReader.frequency ** 2)
@@ -185,6 +220,19 @@ class PermSampling(MCSampling):
 		hdf.close()
 
 class DenSampling(MCSampling):
+	'''
+	An implementation of MCSampling to sample over electron densities
+
+	Additional functions:
+	-	initialiseCoreOrbs: specify which element 
+	- 	sum: sums over electron densities in all the cells 
+	- 	plotAverageRealDensities: plots average densities in real space 
+	- 	plotAverageReciDensities: plots average densities in reciprocal space
+	-	runningAverage: performs running average along a slice (to show that it converges)
+	- 	chisquare: calculates the chi-square after running averages are performed, assuming that the
+		last value is the correct value
+
+	'''
 
 	def __init__(self):
 		self.endstring = 'den_fmt'
@@ -318,7 +366,8 @@ class DenSampling(MCSampling):
 
 	def chisquare(self, plot = False):
 		'''
-		Calculate variance of a variable number of samples and see if it's converged
+		Calculate variance of a variable number of samples and see if it's converged, assuming that
+		the last value is the correct value
 		Require: runningAverage with at least 1 slice
 		'''
 		nSamples = self.realDensities.shape[0] - 1
@@ -385,10 +434,7 @@ class DenSampling(MCSampling):
 			self.realVar /= total_weight
 			self.reciVar /= total_weight
 
-	def readDenFiles(self, denfile):
-		'''
-
-		'''
+	def readDenFiles(self, denfile):		
 		self.fmtReader.read(denfile)
 		assert np.all(self.shape == self.fmtReader.shape)
 		assert np.all(self.realLatticeVectors - self.fmtReader.realLatticeVectors < 1e-6) 
@@ -492,7 +538,7 @@ class DenSampling(MCSampling):
 
 		hdf.close() 
 
-class Bands(MCSampling):
+class Bands(DenSampling):
 	'''
 	A class for calculation of bands
 	'''
@@ -503,6 +549,9 @@ class Bands(MCSampling):
 
 
 	def addDirectory(self, directory):
+		'''
+		Overrides addDirectory in Sampling
+		'''
 		super().super().addDirectory(directory)
 		
 		self.xsfFiles = [join(self.directory, x) for x in listdir(self.directory) 

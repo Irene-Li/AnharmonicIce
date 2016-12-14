@@ -80,9 +80,10 @@ class PermReader(object):
 	Extracts permittivity etc from .castep files 
 
 	Useful class variables: 
-		permittivity
-		polarisability
-		BornEffectiveCharge: born effective charge? 
+		cellVolume
+		nAtoms
+		perms: 3 x 3 array
+		Zeffs: nAtoms x 3 x 3 array
 	'''
 	def __init__(self):
 		pass 
@@ -193,6 +194,20 @@ class XSFReader(object):
 
 class EfieldReader(object):
 
+	'''
+	reads .efield files (only used for testings)
+
+	Useful class variables:
+	-	nIons
+	-	nBranches
+	-	nFreqs
+	-	Q: Q factor
+	-	osciFreq: oscillator frequency
+	-	osciStr: oscillator strength
+	-	freq
+	-	perm
+	'''
+
 	def __init__(self):
 		pass 
 		
@@ -250,6 +265,14 @@ class EfieldReader(object):
 class MappingReader(object):
 	'''
 	reads mapping.output
+
+	Useful class variables:
+	-	nAtoms
+	-	firstMode
+	-	lastMode
+	-	samplesPerMode
+	-	double
+	-	nStds
 	'''
 
 	def __init__(self):
@@ -286,6 +309,12 @@ class MappingReader(object):
 class EnergyReader(object):
 	'''
 	reads energy.dat
+
+	Useful class variables
+	-	samplesPerMode
+	-	frequency
+	-	phononCoord
+	-	BOSurface
 	'''
 
 	def __init__(self, modes):
@@ -334,6 +363,10 @@ class EnergyReader(object):
 class DispReader(object):
 	'''
 	reads disp_pattern.dat
+
+	Useful class variables:
+	-	frequency: eigenvalues
+	-	disp: eigenvalues
 	'''
 	def __init__(self, nAtoms, modes):
 		self.modes = modes
@@ -357,6 +390,9 @@ class DispReader(object):
 class AnhEigenvaluesReader(object):
 	'''
 	reads anharmonic_eigenvalues.dat
+
+	Useful class variables:
+	-	frequency
 	'''
 	def __init__(self, nModes):
 		self.nModes = nModes
@@ -375,6 +411,11 @@ class AnhEigenvaluesReader(object):
 class CellReader(object):
 	'''
 	Reads -out.cell file to numpy array
+
+	Useful class variables:
+	-	species
+	-	latticeVectors
+	-	fracPositions
 	'''
 
 	def peep(self, filename):
@@ -395,6 +436,15 @@ class CellReader(object):
 		self.fracPositions = np.array(ionTable.loc[:, 1:], dtype = float)
 
 class OrbsReader(object):
+	'''
+	Reads .orbs files 
+
+	Useful class variables:
+	-	nGridPoints
+	-	nOrbitals
+	-	radius
+	-	rPhi
+	'''
 
 	# Can be used to read out an arbitrary number of orbits 
 	def read(self, filename):

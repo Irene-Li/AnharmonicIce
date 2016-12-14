@@ -56,19 +56,22 @@ class DensityAnalysisTool(object):
 				self.denSampling.plotAverageReciDensities(nPlots)
 				
 
-	def compareDensities(self, index1, index2, real = True, log = False, frac = False, path = '.', nodoge = True):
+	def compareDensities(self, index1, index2, real = True, log = False, frac = False, path = '.', 
+					nodoge = True):
 		title = '({} - {})'.format(self.labels[index1], self.labels[index2])
 
 		if real:
 			diff = (self.realDensities[index1] - self.realDensities[index2])
 			coor = self.realCoordinates
 			cIndex = 0
-			figurename = join(path, 'figures', 'realDiff_{}vs{}_{}'.format(self.labels[index1], self.labels[index2], cIndex))
+			figurename = join(path, 'figures', 'realDiff_{}vs{}_{}'.format(self.labels[index1], 
+								self.labels[index2], cIndex))
 		else:
 			diff = (self.reciDensities[index1] - self.reciDensities[index2])
 			coor = self.reciCoordinates
 			cIndex = int(self.reciShape[-1]/2)
-			figurename = join(path, 'figures', 'reciDiff_{}vs{}_{}'.format(self.labels[index1], self.labels[index2], cIndex))
+			figurename = join(path, 'figures', 'reciDiff_{}vs{}_{}'.format(self.labels[index1], 
+								self.labels[index2], cIndex))
 
 		if frac:
 			title = '{}/{}'.format(title, self.labels[index2])
@@ -81,7 +84,8 @@ class DensityAnalysisTool(object):
 			diff = np.log(diff)
 			title = 'log({})'.format(title)
 
-		Utils.plotAlongCAxis(diff, coor, figurename, index = cIndex, sum = False, title = title, contour = False)
+		Utils.plotAlongCAxis(diff, coor, figurename, index = cIndex, sum = False, title = title, 
+							contour = False)
 
 		if not nodoge:
 			print(' ─────────▄──────────────▄──── \n', \

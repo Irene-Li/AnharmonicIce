@@ -2,6 +2,8 @@
 
 General purpose Python codes for averaging over Monte Carlo samples in vibrational analysis once they are obtained from CASTEP calculations. See the content of the files for more detailed documentations.
 
+Dependensities: h5py (for data storage), pandas (for reading from files), numpy, scipy, matplotlib
+
 Here is a brief summary of what each file does. 
 
 ### efield.py 
@@ -12,6 +14,9 @@ Contains class DensityAnalysisTool for calculating and plotting densities in a f
 
 ### mapping.py
 For mapping Z* and electronic permittivity over vibrational normal modes
+* Mapping: similar to PermSampling, collects information within a directory
+* MappingTool: maps several directories and collecting information together
+* Energy: calculates the correction to BO energy surface due to efield 
 
 ### groundstate.py 
 For comparing the ground state permittivities of different proton orders 
