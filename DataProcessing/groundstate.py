@@ -105,15 +105,10 @@ class GroundStatePermittivity(object):
 
 if __name__ == '__main__':
 
-	'''
 	path = 'ProtonOrders'
 	tool = GroundStatePermittivity(path)
 	tool.samplePermittivity()
-	'''
 
-	path = 'Functionals'
-	tool = GroundStatePermittivity(path)
-	tool.samplePermittivity()
 
 
 

@@ -20,8 +20,9 @@ class MCSampling(object): # abstract class
 	General purpose MC-sampling parent class for averaging over all the files in a directory with weights
 
 	Required structure of the directory: 
-	  -	files that end with the same string (e.g. IceIh.20.den_fmt for electron density), 
-		which contain the quantities to be averaged over
+	  -	files that end with the same string, which contain the quantities to be averaged over
+		There must be a number in the middle to index the files. 
+		e.g. IceIh.20.den_fmt for electron density
 	  - weights.dat that contain the weights of all the data points. 
 		There is one-to-one correspondence between lines in weights.dat. For example, the ith row of weights.dat 
 		corresponds to IceIh.i.den_fmt
@@ -76,6 +77,8 @@ class MCSampling(object): # abstract class
 			self.weights = np.ones((self.nFiles))
 
 class PermSampling(MCSampling):
+	'''
+	'''
 
 	def __init__(self):
 		self.endstring = '.castep'
@@ -492,7 +495,6 @@ class DenSampling(MCSampling):
 class Bands(MCSampling):
 	'''
 	A class for calculation of bands
-	(Decorator Design Pattern)
 	'''
 
 	def __init__(self, directory):
@@ -501,7 +503,7 @@ class Bands(MCSampling):
 
 
 	def addDirectory(self, directory):
-		super().super().addDirectory(directory) # check if this works... 
+		super().super().addDirectory(directory)
 		
 		self.xsfFiles = [join(self.directory, x) for x in listdir(self.directory) 
 						if x.endswith('.xsf')]
@@ -521,8 +523,8 @@ class Bands(MCSampling):
 
 		return self.xsfReader.densities
 
-	def plotBands(self, nbands, plotOrbits = False):
-		densities = 0 # 96 electrons in total
+	def plotBands(self, nbands, totalElectronNumber, plotOrbits = False):
+		densities = 0 
 		for bandIndex in range(1, nbands+1):
 			orbit = self.getElectronDensityForBands(bandIndex)
 			densities += orbit/np.sum(orbit) * 2 # two electrons per orbit
@@ -539,7 +541,7 @@ class Bands(MCSampling):
 		Utils.plotAlongCAxis(densities, self.realCoordinates, figureName, 
 							title = title, sum = False, contour = True, nlines = 8)
 
-		leftoverDensities = self.realMean/np.sum(self.realMean) * 96 - densities
+		leftoverDensities = self.realMean/np.sum(self.realMean) * totalElectronNumber - densities
 		figureName = join(self.directory, 'figures/Without_{}_bands'.format(nbands))
 		title = 'Electron Density without {} bands'.format(nbands)
 		Utils.plotAlongCAxis(leftoverDensities, self.realCoordinates, figureName, 

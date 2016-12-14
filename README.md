@@ -13,8 +13,8 @@ Contains class DensityAnalysisTool for calculating and plotting densities in a f
 ### mapping.py
 For mapping Z* and electronic permittivity over vibrational normal modes
 
-### protondisorder.py
-For sampling electron permittities over different proton orders
+### groundstate.py 
+For comparing the ground state permittivities of different proton orders 
 
 ### Sampling.py
 Classes for Monte Carlo sampling over castep outputs to be used in efield.py and density.py

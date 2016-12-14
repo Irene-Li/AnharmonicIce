@@ -3,13 +3,6 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from scipy import stats, integrate
 
-def texsetup():
-    plt.rc('text.latex', preamble=r'\usepackage{mathpazo},\usepackage{siunitx}')
-    plt.rc('text', usetex=True)
-    plt.rc('font', family='serif')
-    plt.rc('font', size=15)
-    plt.rc('font', weight='normal')
-
 def fracs2Coordinates(fracs, baseVectors, shape):
 	return np.dot(fracs, baseVectors).reshape((*shape, 3), order = 'F')
 
