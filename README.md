@@ -2,12 +2,11 @@
 
 General purpose Python codes for averaging over Monte Carlo samples in vibrational analysis once they are obtained from CASTEP calculations. See the content of the files for more detailed documentations.
 
-
-
+STRUCTURE.md gives a brief summary of my results as an example of the usage of the codes. 
 
 Dependensities: h5py (for data storage), pandas (for reading from files), numpy, scipy, matplotlib
 
-Here is a brief summary of what each file does. 
+Here is a brief summary of what each file in DataProcessing does. 
 
 ### efield.py 
 Contains class PermAnalysisTool for calculating and plotting permittivities in a few related directories (e.g. different temperatures, different proton orders, different functionals). See the main method for examples of how it is used. 

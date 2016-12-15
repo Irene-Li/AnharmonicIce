@@ -180,7 +180,7 @@ if __name__ == '__main__':
 	terminal = '../Results/Efield/Temperature'
 
 	tool = PermAnalysisTool(dirs, dispFile)
-	tool.getPermittivities(update=False, anharmonicity=True, anhFreqFiles=anhFile)
+	tool.getPermittivities(update=False, anharmonicity=False, anhFreqFiles=anhFile)
 	tool.saveSummary(terminal)
 
 
@@ -202,16 +202,16 @@ if __name__ == '__main__':
 	terminal = '../Results/Efield/ProtonOrders/Temperature'
 
 	tool1 = PermAnalysisTool(dir_static, dispFiles)
-	tool1.getPermittivities(update=False, anharmonicity=True, anhFreqFiles=anhFiles)
+	tool1.getPermittivities(update=False, anharmonicity=False, anhFreqFiles=anhFiles)
 	tool1.saveSummary(join(terminal, temperatures[0]))
 
 	tool2 = PermAnalysisTool(dir_0K, dispFiles)
-	tool2.getPermittivities(update=False, anharmonicity=True, anhFreqFiles=anhFiles)
+	tool2.getPermittivities(update=False, anharmonicity=False, anhFreqFiles=anhFiles)
 	tool2.saveSummary(join(terminal, temperatures[1]))
 
 	number = 10
 	for i in range(3):
-		tool2.plotSamplePerms(number, terminal, anharmonicity=True, anhFreqFiles=anhFiles, index=(i, i))
+		tool2.plotSamplePerms(number, terminal, anharmonicity=False, anhFreqFiles=anhFiles, index=(i, i))
 
 	PermAnalysisTool.diffSummary(tool1, tool2, terminal)
 
@@ -231,26 +231,26 @@ if __name__ == '__main__':
 
 	# For ground state energy
 	tool1 = PermAnalysisTool(dir_static, dispFiles)
-	tool1.getPermittivities(update=False, anharmonicity=True, anhFreqFiles=anhFiles, numberOfFiles=0)
+	tool1.getPermittivities(update=False, anharmonicity=False, anhFreqFiles=anhFiles, numberOfFiles=0)
 	tool1.saveSummary(join(terminal, temperatures[0]))
 
 	# For 0k 
 	tool2 = PermAnalysisTool(dir_0K, dispFiles)
 
 	number = 1 
-	tool2.getPermittivities(update=False, anharmonicity=True, anhFreqFiles=anhFiles, numberOfFiles=number)
+	tool2.getPermittivities(update=False, anharmonicity=False, anhFreqFiles=anhFiles, numberOfFiles=number)
 	tool2.saveSummary(join(terminal, temperatures[1]))
 
 	number = 2
-	tool2.getPermittivities(update=False, anharmonicity=True, anhFreqFiles=anhFiles, numberOfFiles=number)
+	tool2.getPermittivities(update=False, anharmonicity=False, anhFreqFiles=anhFiles, numberOfFiles=number)
 	tool2.saveSummary(join(terminal, temperatures[1]))
 
 	number = 10
 	for i in range(3):
-		tool2.plotSamplePerms(number, terminal, anharmonicity=True, anhFreqFiles=anhFiles, index=(i, i)) # plot the diagonal elements
+		tool2.plotSamplePerms(number, terminal, anharmonicity=False, anhFreqFiles=anhFiles, index=(i, i)) # plot the diagonal elements
 
 	number = 20
-	tool2.getPermittivities(update=False, anharmonicity=True, anhFreqFiles=anhFiles, numberOfFiles=number)
+	tool2.getPermittivities(update=False, anharmonicity=False, anhFreqFiles=anhFiles, numberOfFiles=number)
 	tool2.saveSummary(join(terminal, temperatures[1]))
 
 	# Compare the difference between ground state and 0K 
