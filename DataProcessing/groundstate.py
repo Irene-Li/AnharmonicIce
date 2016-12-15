@@ -12,8 +12,8 @@ class GroundStatePermittivity(object):
 		self.labels = [x for x in listdir(path) if isdir(join(path,x))]
 		self.permReader = PermReader()
 
-	def samplePermittivity(self):
-		outfile = join(self.path, 'permittivity_summary.dat')
+	def samplePermittivity(self, terminal):
+		outfile = join(terminal, 'permittivity_summary.dat')
 		f = open(outfile, 'w')
 		startMode = 3
 
@@ -105,9 +105,10 @@ class GroundStatePermittivity(object):
 
 if __name__ == '__main__':
 
-	path = 'ProtonOrders'
+	path = '../ProtonOrders'
+	terminal = '../Results/Efield/ProtonOrders/GroundState'
 	tool = GroundStatePermittivity(path)
-	tool.samplePermittivity()
+	tool.samplePermittivity(terminal)
 
 
 

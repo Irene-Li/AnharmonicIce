@@ -2,7 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from os import listdir 
 from os.path import join, isfile
-from readers import MappingReader, PermReader, EnergyReader, DispReader
+from Readers import MappingReader, PermReader, EnergyReader, DispReader
 import h5py
 
 class Mapping(object):
@@ -237,16 +237,16 @@ class MappingTool(object):
 		self.dirs = dirs
 		self.mapper = Mapping()	
 
-	def mapAllDirectories(self, deg = 3):
-		for directory in dirs:
-			self.mapper.addDirectory(directory)
-			self.mapper.mapAllModes2hdf5(update = False, deg = deg)
-
 	def peep(self):
 		self.mapper.addDirectory(self.dirs[0])
 		self.mapper.readSummary()
 		self.nAtoms = self.mapper.nAtoms
 		self.nModes = self.nAtoms * 3 - 3 # excluding the translational ones
+
+	def mapAllDirectories(self, deg = 3):
+		for directory in dirs:
+			self.mapper.addDirectory(directory)
+			self.mapper.mapAllModes2hdf5(update = False, deg = deg)
 
 	def collect(self, terminal):
 		filename = join(terminal, 'mapping.hdf5')
@@ -255,7 +255,8 @@ class MappingTool(object):
 		hdf.attrs['nModes'] = self.nModes
 
 		for directory in self.dirs:
-			files = [join(directory, x) for x in listdir(directory) if x.startswith('SingleMode') and x.endswith('.hdf5')]
+			files = [join(directory, x) for x in listdir(directory) 
+					if x.startswith('SingleMode') and x.endswith('.hdf5')]
 			for f in files:
 				mode = str(self.mapper.readSingleMode(f))
 				print('looking at mode:', mode)
@@ -329,16 +330,25 @@ class Energy(object):
 
 
 if __name__ == '__main__':
-	
-	# dirs = [join('ZMapping', 'output', x) for x in ['single_1', 'single_2', 'single_3', 'single_4']]
-	# terminal = join('ZMapping', 'output')
-	# tool = MappingTool(dirs)
-	# tool.peep()
-	# tool.mapAllDirectories()
-	# tool.collect(terminal)
 
-	wd = 'VSCF/input_files'
-	outfile = join(wd, 'modified_energy.dat')
+	# =========================
+	# Maps all the single modes
+	# =========================
+
+	dirs = [join('../ZMapping', 'output', x) for x in ['single_1', 
+				'single_2', 'single_3', 'single_4']]
+	terminal = '../Results/Efield/Mapping'
+	tool = MappingTool(dirs)
+	tool.peep()
+	tool.mapAllDirectories()
+	tool.collect(terminal)
+
+	# =========================================================
+	# Calculate the correction to BO surface due to some efield
+	# =========================================================
+
+	wd = '../ZMapping/Energy'
+	outfile = join(terminal, 'modified_energy.dat')
 	energy = Energy(wd)
 	energy.calculatePolarisation()
 	energy.calculateEnergy([0, 1, 0], outfile)

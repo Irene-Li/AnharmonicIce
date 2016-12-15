@@ -2,6 +2,9 @@
 
 General purpose Python codes for averaging over Monte Carlo samples in vibrational analysis once they are obtained from CASTEP calculations. See the content of the files for more detailed documentations.
 
+
+
+
 Dependensities: h5py (for data storage), pandas (for reading from files), numpy, scipy, matplotlib
 
 Here is a brief summary of what each file does. 

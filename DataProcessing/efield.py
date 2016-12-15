@@ -69,7 +69,6 @@ class PermAnalysisTool(object):
 				self.phononPerms[n, i] = pho[index] 
 
 
-
 	def getPermittivities(self, update=True, anharmonicity=False, anhFreqFiles=[], numberOfFiles=0):
 		self.electronPerm = np.zeros((self.ndirs, 3, 3))
 		self.phononPerm = np.zeros((self.ndirs, 3, 3))
@@ -170,23 +169,21 @@ class PermAnalysisTool(object):
 
 if __name__ == '__main__':
 
-	'''
 	# ======================
 	# Temperature Dependence
 	# ======================
+
 	temperatures = ['static', '0K', '100K', '240K']
-	dirs = [join('Efield/output', x) for x in temperatures]
-	dispFile = [join('Efield/input_files', 'disp_patterns.dat')] * len(dirs)
-	anhFile = [join('Efield/input_files', 'anharmonic_eigenvalues.dat')] * len(dirs)
-	terminal = 'Efield/output'
+	dirs = [join('../Efield/IceIh_Cmc21/output', x) for x in temperatures]
+	dispFile = [join('../Efield/IceIh_Cmc21/input_files', 'disp_patterns.dat')] * len(dirs)
+	anhFile = [join('../Efield/IceIh_Cmc21/anharmonic_eigen', 'anharmonic_eigenvalues.dat')] * len(dirs)
+	terminal = '../Results/Efield/Temperature'
 
 	tool = PermAnalysisTool(dirs, dispFile)
-	tool.getPermittivities(update=True, show=True, anharmonicity=True, anhFreqFile=anhFile)
+	tool.getPermittivities(update=False, anharmonicity=True, anhFreqFiles=anhFile)
 	tool.saveSummary(terminal)
-	''' 
 
 
-	'''
 	# =============
 	# Proton Orders  
 	# =============
@@ -202,19 +199,22 @@ if __name__ == '__main__':
 	dir_0K = [join('../Efield', protonorder, 'output', temperatures[1])
 			for protonorder in protonorders]
 
-	terminal = '../Efield/summaries'
+	terminal = '../Results/Efield/ProtonOrders/Temperature'
 
 	tool1 = PermAnalysisTool(dir_static, dispFiles)
-	tool1.getPermittivities(update=True, anharmonicity=True, anhFreqFiles=anhFiles)
+	tool1.getPermittivities(update=False, anharmonicity=True, anhFreqFiles=anhFiles)
 	tool1.saveSummary(join(terminal, temperatures[0]))
 
 	tool2 = PermAnalysisTool(dir_0K, dispFiles)
-	tool2.getPermittivities(update=True, anharmonicity=True, anhFreqFiles=anhFiles)
+	tool2.getPermittivities(update=False, anharmonicity=True, anhFreqFiles=anhFiles)
 	tool2.saveSummary(join(terminal, temperatures[1]))
+
+	number = 10
+	for i in range(3):
+		tool2.plotSamplePerms(number, terminal, anharmonicity=True, anhFreqFiles=anhFiles, index=(i, i))
 
 	PermAnalysisTool.diffSummary(tool1, tool2, terminal)
 
-	''' 
 
 	# =========== 
 	# Functionals 
@@ -227,22 +227,22 @@ if __name__ == '__main__':
 	dir_static = [join('../Functionals', functional, 'output', temperatures[0]) for functional in functionals]
 	dir_0K = [join('../Functionals', functional, 'output', temperatures[1]) for functional in functionals]
 
-	terminal = '../Functionals/summaries'
+	terminal = '../Results/Efield/Functionals'
 
 	# For ground state energy
 	tool1 = PermAnalysisTool(dir_static, dispFiles)
-	tool1.getPermittivities(update=True, anharmonicity=True, anhFreqFiles=anhFiles, numberOfFiles=0)
+	tool1.getPermittivities(update=False, anharmonicity=True, anhFreqFiles=anhFiles, numberOfFiles=0)
 	tool1.saveSummary(join(terminal, temperatures[0]))
 
 	# For 0k 
 	tool2 = PermAnalysisTool(dir_0K, dispFiles)
 
 	number = 1 
-	tool2.getPermittivities(update=True, anharmonicity=True, anhFreqFiles=anhFiles, numberOfFiles=number)
+	tool2.getPermittivities(update=False, anharmonicity=True, anhFreqFiles=anhFiles, numberOfFiles=number)
 	tool2.saveSummary(join(terminal, temperatures[1]))
 
 	number = 2
-	tool2.getPermittivities(update=True, anharmonicity=True, anhFreqFiles=anhFiles, numberOfFiles=number)
+	tool2.getPermittivities(update=False, anharmonicity=True, anhFreqFiles=anhFiles, numberOfFiles=number)
 	tool2.saveSummary(join(terminal, temperatures[1]))
 
 	number = 10
